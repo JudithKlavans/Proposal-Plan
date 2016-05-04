@@ -1,0 +1,14 @@
+
+I wonder if it's possible to organize the proposal in a way that will make sense to Hal and Jordan.  If you mirror the typical academic paper style, they will appreciate this.   
+I'd start with a paragraph on a statement of the problem.
+Then just a few sentences on related work in say speech reco and then in interpretation.  A few related ref's here.
+Say how interpretation is a newish area of modeling (which it is). 
+Next section (just a few sentences, don't overachieve!) on the system itself.  You've already written this.
+Next section:  your hypothesis, namely that repairs can be predicted.
+Next section: your proposed methodology.
+Next section:  your dataset and evaluation method
+Next section: your thoughts (informal is fine) on what problems might come up that could prevent you from getting solid results, e.g. not a good data set, not enough data, or anything else you think of.  This is a good way to show you've thought about the problems in this work.
+Final words:  what I hope to show is [and then say it]. The original contribution of this paper is [then say it].
+
+Remember:  Keep it short and simple.  The whole thing needs to be succinct.  What I've observed is that you aim very high, and this is a real plus, but I don't want that wonderful characteristic to get in the way of keeping just to the core of what they need to see and what you need to express.
+
