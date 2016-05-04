@@ -1,0 +1,91 @@
+* Overview
+A system intended to do real-time simultaneous interpretation should be able to    make a correct translation despite a dysfluency.
+My long term goal is to improve the real-time responsiveness of Simtrans by introducing components that predict and recover from disfluencies in the input speech. 
+In this document I will list short term steps to achieve this goal.  
+The first set of steps will involve building and evaluating disfluency prediction models. 
+The second set of steps wil focus on incorporating those models into simtrans. 
+
+First, I will consider the problem of predicting disfluencies made by speakers. 
+Disfluencies, specifically, the reparanda preceding repairs made bye the speaker can be observed in speech input to the Simtrans system. 
+A lot of work has been done on disfluency detection in the fields of Automatic Speech Recognition, Dialogue Management Systems and Cognitive Science. 
+Hence, my goal is not to investigate disfluency detection , but rather to test the hypothesis that disfluency prediction improves the responsiveness and quality of simultaneous translation. 
+
+A recent paper by Lowder and Ferreira deals with how prediction is used in disfluency processing from the cognitive science perspective. 
+They proposed a model for predicting a repair from a reparandum. 
+They conjecture that listeners create an "alternate set" of candidate phrases to replace the reparandum.
+Neural network models have been proposed by Zayat and Ostendorf to be used in ASR systems. 
+Hough and Schlagen have implemented an RNN for incremental disfluency prediction  in a dialogue management system.
+Work has also been done on removing disfluencies from input to Speech interfaces. 
+This work includes efforts to improve machine translation output by removing disfluencies from its input. 
+
+Before working in a bilingual simultaneous translation context, I will consider the disfluency prediction problem in isolation on English monolingual text. 
+My first step will be to implement previously  developed systems in order to evaluate them and decide which one would be appropriate to use in Simtrans. 
+Previous work includes systems that use Conditional RAndom Fields, a Recurrent Neural Network, and Bidirectional LSTMs.
+
+In a second set of steps, I plan on incorporating the disfluency predictor  that performed best into a repair algorithm in the Simtrans system. 
+I propose to incorporate repairs  into Simtrans by introducing three components into its  invitation learning framework.
+I will define a new action, a reparandum and a new state feature. 
+
+First I propose a new action that I  call and Interupt.
+The interupt action is triggered by the disfluency predictor and it initiates the repair operation.
+
+To make the repair concept more precise I define a chunk of bi-text that I call a bi-reparandum. 
+The bi-reparandum contains the input reparandum and the its translation. 
+I associate the bi-reparandum with a set of states.
+The bi-reparandum is bounded by two states.
+The left-hand boundary of the bi-reparandum  is given by the    first preceding state  where a COMMIT action was taken.
+The right-hand boundary of the bi-reparandum  is the  current state when the disfluency predictor was triggered.
+
+The state is also modified to model where a repair should start. 
+A binary feature called PROVISIONAL is added to the state vector.
+When  the policy takes  a WAIT, NEXTWORD or VERB FINAL action the provisional feature is always set to True. 
+These actions are always provisional. 
+When the commit   action  is first taken the provisional feature is set to true, but it  will later be changed to False. 
+Once the PROVISIONAL feature is set to False it will never be changed again. 
+I assume that repairs are only performed once on a chunk of speech. 
+
+A repair entails the following sequence of events: 
+- The decision to interupt is triggered by the disfluency predictor in the policy; 
+- the interupt action is invoked; 
+- the system jumps back to the first previous state where a COMMIT action was taken, i.e. it searches for the left-hand boundary of the bi-reparandum; 
+- that state is copied to the current state; 
+- the bi-reparandum is dropped; 
+- the provisional feature is set to False; and
+- the chunk of input text in the reparandum is retranslated.
+
+Another possible way to trigger an interupt action could be using Bleu scores.
+As translations are produced there blue scores are recorded and if they fall below a threshold    the interupt action is taken.
+
+* Concrete Project Milestones
+** Repair Models  
+*** Month 1
+    SCHEDULED: <2016-06-01 Wed>
+- Do a literature search for models of repair processes and previous work. 
+- Secure data annotated for repair modeling.
+- Secure tools for building previous models. 
+- Define the REpair model for simultaneous translation.
+*** Month 2
+    SCHEDULED: <2016-07-01 Fri>
+- If no data exists for German/English or Japanese/English, create simulated data.
+- Prepare and Analyze the data. 
+- Train CRF model.
+*** Month 3
+    SCHEDULED: <2016-08-01 Mon>
+- Build other models including RNN and BLSTM.
+*** Month 4
+    SCHEDULED: <2016-09-01 Thu>
+- Evaluate models.
+** Enhance Simtrans with Repairs
+*** Month 5
+    SCHEDULED: <2016-10-01 Sat>
+- Build toy repair enhanced simtrans model.
+- Implement repair algorithm in Simtrans.
+*** Month 6
+    SCHEDULED: <2016-11-01 Tue>
+- Build real Simtrans model on small amount of data.
+*** Month 7
+    SCHEDULED: <2016-12-01 Thu>
+- Build large scale Repair enhanced Simtrans model. 
+- Design evaluation.
+*** Month 8
+- Evaluate Repair enhanced Simtrans model. 
